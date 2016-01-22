@@ -16,7 +16,8 @@ import org.springframework.stereotype.Repository;
 import be.kroma.entities.Klant;
 
 @Repository
-class KlantDAOImpl implements KlantDAO {
+class KlantDAOImpl implements KlantDAO {	
+
 	private final SimpleJdbcInsert simpleJdbcInsert;
 
 	// autowired beans
@@ -39,6 +40,11 @@ class KlantDAOImpl implements KlantDAO {
 												+ "huisnr, postcode, gemeente, gebruikersnaam, paswoord "
 												+ "from klanten where gebruikersnaam = ?";
 
+	private final String SQL_FIND_BY_ID = "select id, voornaam, familienaam, straat, "
+			+ "huisnr, postcode, gemeente, gebruikersnaam, paswoord "
+			+ "from klanten where id = ?";
+	private static final String SQL_FIND_ID_BY_USERNAME = "select id from klanten where gebruikersnaam = ? ";
+
 	@Override
 	public void create(Klant klant) {
 		String encryptedPassword = new BCryptPasswordEncoder().encode(klant.getPaswoord());
@@ -58,7 +64,12 @@ class KlantDAOImpl implements KlantDAO {
 	}
 
 	@Override
-	public boolean bestaatKlant(String gebruikersnaam) {
+	public int findKlantID(String name) {		
+		return jdbcTemplate.queryForObject(SQL_FIND_ID_BY_USERNAME, Integer.class, name);
+	}
+	
+	@Override
+	public boolean bestaatGebruikersnaam(String gebruikersnaam) {
 		Boolean klantBestaat = true;
 		try {
 			@SuppressWarnings("unused")
@@ -69,6 +80,18 @@ class KlantDAOImpl implements KlantDAO {
 		return klantBestaat;
 	}
 
+	@Override
+	public boolean bestaatKlant(int klantid) {
+		Boolean klantBestaat = true;
+		try {
+			@SuppressWarnings("unused")
+			Klant klant = jdbcTemplate.queryForObject(SQL_FIND_BY_ID , klantRowMapper, klantid);
+		} catch (EmptyResultDataAccessException ex){
+			klantBestaat = false;
+		}
+		return klantBestaat;
+	}
+	
 	// rowmapper class
 	private static class KlantRowMapper implements RowMapper<Klant> {
 
@@ -86,5 +109,7 @@ class KlantDAOImpl implements KlantDAO {
 		}
 
 	}
+
+
 
 }

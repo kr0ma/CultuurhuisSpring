@@ -44,6 +44,11 @@ class MandjeImpl implements Mandje, Serializable{
 		for (Integer id : ids){
 			voorstellingen.remove(id);
 		}
+	}
+
+	@Override
+	public void clear() {
+		voorstellingen.clear();
 	}	
 
 }

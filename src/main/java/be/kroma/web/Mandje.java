@@ -8,5 +8,6 @@ interface Mandje {
 	boolean isVoorstellingAanwezig(int voorstellingID);
 	boolean isLeeg();
 	Map<Integer, Integer> getVoorstellingen();
-	void verwijderVoorstellingen(Iterable<Integer> ids);	
+	void verwijderVoorstellingen(Iterable<Integer> ids);
+	void clear();	
 }

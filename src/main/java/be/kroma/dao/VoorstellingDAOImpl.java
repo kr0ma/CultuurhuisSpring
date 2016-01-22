@@ -3,6 +3,8 @@ package be.kroma.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import be.kroma.entities.Voorstelling;
 
@@ -30,14 +33,16 @@ class VoorstellingDAOImpl implements VoorstellingDAO {
 	private final VoorstellingRowMapper voorstellingRowMapper = new VoorstellingRowMapper();
 
 	// SQL statements
-	private final String SQL_FIND_BY_GENRE_ID = "select id, titel, uitvoerders, datum, genreid, prijs, vrijeplaatsen "
+	private static final String SQL_FIND_BY_GENRE_ID = "select id, titel, uitvoerders, datum, genreid, prijs, vrijeplaatsen "
 			+ "from voorstellingen where genreid = ?";
 
-	private final String SQL_FIND_BY_ID = "select id, titel, uitvoerders, datum, genreid, prijs, vrijeplaatsen "
+	private static final String SQL_FIND_BY_ID = "select id, titel, uitvoerders, datum, genreid, prijs, vrijeplaatsen "
 			+ "from voorstellingen where id = ?";
 
-	private final String SQL_FIND_BY_IDS = "select id, titel, uitvoerders, datum, genreid, prijs, vrijeplaatsen "
+	private static final String SQL_FIND_BY_IDS = "select id, titel, uitvoerders, datum, genreid, prijs, vrijeplaatsen "
 			+ "from voorstellingen where id IN ( :ids )";
+	
+	private static final String UPDATE_PLAATSEN_VAN_VOORSTELLING = "UPDATE voorstellingen SET vrijeplaatsen= vrijeplaatsen - :plaatsen WHERE id= :id and vrijeplaatsen >= :plaatsen";
 
 	@Override
 	public Iterable<Voorstelling> findVoorstellingenByGenreId(int genreID) {
@@ -55,6 +60,15 @@ class VoorstellingDAOImpl implements VoorstellingDAO {
 				voorstellingRowMapper);
 	}
 
+	@Transactional(readOnly = false)
+	@Override
+	public int updateVoorstellingPlaatsen(int id, int plaatsen) {
+		Map<String, Object> kolomwaarden = new HashMap<>();
+		kolomwaarden.put("id", id);
+		kolomwaarden.put("plaatsen", plaatsen);
+		return namedParameterJdbcTemplate.update(UPDATE_PLAATSEN_VAN_VOORSTELLING, kolomwaarden);
+	}
+	
 	// rowmapper class
 	private static class VoorstellingRowMapper implements RowMapper<Voorstelling> {
 
@@ -66,5 +80,5 @@ class VoorstellingDAOImpl implements VoorstellingDAO {
 		}
 
 	}
-
+	
 }

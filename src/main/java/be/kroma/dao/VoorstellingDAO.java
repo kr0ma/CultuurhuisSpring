@@ -10,4 +10,6 @@ public interface VoorstellingDAO {
 	Voorstelling findVoorstellingById(int id);
 
 	Iterable<Voorstelling> findVoorstellingenByIDS(Set<Integer> voorstellingIDS);
+	
+	int updateVoorstellingPlaatsen(int id, int plaatsen);
 }

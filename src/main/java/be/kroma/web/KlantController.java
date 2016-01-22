@@ -33,7 +33,7 @@ class KlantController {
 		if (!nieuweKlantForm.getVerifPaswoord().equals(nieuweKlantForm.getPaswoord())) {
 			bindingResult.rejectValue("verifPaswoord", null, "Paswoorden moeten gelijk zijn");
 		}
-		if (klantService.bestaatKlant(nieuweKlantForm.getGebruikersnaam())) {
+		if (klantService.bestaatGebruikersnaam(nieuweKlantForm.getGebruikersnaam())) {
 			bindingResult.rejectValue("gebruikersnaam", null, "Gebruikersnaam bestaat reeds");
 		}
 		if (bindingResult.hasErrors()) {

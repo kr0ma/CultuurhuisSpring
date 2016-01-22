@@ -1,7 +1,10 @@
 package be.kroma.web;
 
 import java.math.BigDecimal;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.validation.Valid;
 
@@ -12,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import be.kroma.entities.Reservatie;
 import be.kroma.entities.Voorstelling;
+import be.kroma.services.ReservatieService;
 import be.kroma.services.VoorstellingService;
 
 @Controller
@@ -21,12 +26,14 @@ class ReservatieController {
 
 	// autowired beans
 	private final VoorstellingService voorstellingService;
+	private final ReservatieService reservatieService;
 	private final Mandje mandje;
 
 	// constructor injection
 	@Autowired
-	ReservatieController(VoorstellingService voorstellingService, Mandje mandje) {
+	ReservatieController(VoorstellingService voorstellingService, Mandje mandje, ReservatieService reservatieService) {
 		this.voorstellingService = voorstellingService;
+		this.reservatieService = reservatieService;
 		this.mandje = mandje;
 	}
 	
@@ -74,8 +81,13 @@ class ReservatieController {
 	}
 
 	@RequestMapping(value = "/bevestigen", method = RequestMethod.POST)
-	String reservatieInboeken(){
-		System.out.println("inboeken zal nu gebeuren");
+	String reservatieInboeken(Principal principal){				
+		List<Reservatie> reservaties = new ArrayList<>();
+		for (Entry<Integer, Integer> entry : mandje.getVoorstellingen().entrySet()){
+			reservaties.add(new Reservatie(entry.getKey(), entry.getValue()));			
+		}
+		reservatieService.createReservaties(reservaties, principal.getName());
+		mandje.clear();		
 		return "redirect:/reservatie/bevestig";
 	}
 

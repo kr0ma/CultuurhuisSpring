@@ -4,5 +4,5 @@ import be.kroma.entities.Klant;
 
 public interface KlantService {
 	void create (Klant klant);
-	boolean bestaatKlant(String gebruikersnaam);
+	boolean bestaatGebruikersnaam(String gebruikersnaam);	
 }
