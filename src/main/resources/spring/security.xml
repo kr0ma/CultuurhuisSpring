@@ -11,10 +11,24 @@ http://www.springframework.org/schema/security/spring-security.xsd'>
 		<form-login login-page="/reservatie/bevestig" 
 					default-target-url="/reservatie/bevestig" 
 					authentication-failure-url="/reservatie/bevestig?error=true"/>
-		<logout logout-success-url='/reservatie/bevestig'/>
-		<!-- <intercept-url pattern='/filialen/toevoegen' access="hasRole('manager')" 
-			/> <intercept-url pattern='/filialen' method='POST' access="hasRole('manager')" 
-			/> <intercept-url pattern='/werknemers' access="hasAnyRole('magazijnier','helpdeskmedewerker')" 
+		<logout logout-success-url='/reservatie/bevestig' invalidate-session="false" />
+		<!-- 
+			anyone : 
+				- /*
+				- /genre/*
+				- /voorstelling/*
+				- /klant/*
+				- /reservatie/*
+			authenticated:
+				- /reservatie/bevestig POST
+			
+		 -->		
+		<intercept-url pattern='/reservatie/bevestigen' access="isAuthenticated()"/>
+		<intercept-url pattern='/klant/*' access="isAnonymous()"/>
+		<intercept-url pattern='/**' access="permitAll()"/>
+			<!-- 
+			<intercept-url pattern='/filialen' method='POST' access="hasRole('manager')"/> 
+			<intercept-url pattern='/werknemers' access="hasAnyRole('magazijnier','helpdeskmedewerker')" 
 			/> -->
 	</http>
 	<beans:bean name="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>

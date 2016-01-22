@@ -73,5 +73,10 @@ class ReservatieController {
 		return "reservatie/bevestig";
 	}
 
+	@RequestMapping(value = "/bevestigen", method = RequestMethod.POST)
+	String reservatieInboeken(){
+		System.out.println("inboeken zal nu gebeuren");
+		return "redirect:/reservatie/bevestig";
+	}
 
 }

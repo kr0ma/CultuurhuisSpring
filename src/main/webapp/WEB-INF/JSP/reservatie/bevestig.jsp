@@ -39,7 +39,7 @@
 	</div>
 	<div>
 		<h2>Stap 2:Bevestigen</h2>
-		<form method="post">
+		<form method="post" action='<c:url value="/reservatie/bevestigen"></c:url>'>
 			<input type='submit' value='Bevestigen' name="bevestigen"
 				<c:if test="${empty userName}">disabled="disabled"</c:if>>
 		</form>
